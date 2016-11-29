@@ -6,9 +6,8 @@ var gulp = require('gulp'),
 	compass = require('gulp-compass'),
 	concat = require('gulp-concat');
 
-// gulp.task('log', function() {
-// 	gutil.log('Workflows are awesome');
-// });
+
+// CORE TASKS ----------------------------------------------------------------|
 
 gulp.task('default', ['coffee', 'js', 'compass', 'watch']);
 
@@ -17,6 +16,7 @@ gulp.task('watch', function() {
 	gulp.watch(jsSources, ['js']);
 	gulp.watch('components/sass/*.scss', ['compass']);
 });
+
 
 // PROCESS JS ----------------------------------------------------------------|
 
