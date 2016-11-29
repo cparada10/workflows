@@ -11,13 +11,14 @@ var gulp = require('gulp'),
 // CORE TASKS ----------------------------------------------------------------|
 
 // Default tasks
-gulp.task('default', ['coffee', 'js', 'compass', 'connect', 'watch']);
+gulp.task('default', ['html', 'coffee', 'js', 'compass', 'connect', 'watch']);
 
 // Files to watch
 gulp.task('watch', function() {
-	gulp.watch(coffeeSources, ['coffee']);
-	gulp.watch(jsSources, ['js']);
-	gulp.watch('components/sass/*.scss', ['compass']);
+	gulp.watch( coffeeSources, ['coffee'] );
+	gulp.watch( jsSources, ['js'] );
+	gulp.watch( 'components/sass/*.scss', ['compass'] );
+	gulp.watch( htmlSources, ['html'] );
 });
 
 // Live Reload Server
@@ -26,6 +27,17 @@ gulp.task('connect', function() {
 		root: 'builds/development',
 		livereload: true
 	});
+});
+
+// Watch HTML Files
+var htmlSources = [
+	'builds/development/*.html', 
+	'builds/development/*.php',
+	'builds/development/js/*.json'
+];
+gulp.task('html', function() {
+	gulp.src(htmlSources)
+		.pipe(connect.reload())
 });
 
 
