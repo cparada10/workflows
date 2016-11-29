@@ -1,3 +1,4 @@
+// SET REQUIREMENTS ----------------------------------------------------------|
 var gulp = require('gulp'),
 	gutil = require('gulp-util'), 
 	coffee = require('gulp-coffee'),
@@ -9,6 +10,10 @@ var gulp = require('gulp'),
 // 	gutil.log('Workflows are awesome');
 // });
 
+gulp.task('default', ['coffee', 'js', 'compass']);
+
+// PROCESS JS ----------------------------------------------------------------|
+
 var coffeeSources = ['components/coffee/tagline.coffee'];
 var jsSources = [
 	'components/scripts/rclick.js',
@@ -16,7 +21,7 @@ var jsSources = [
 	'components/scripts/tagline.js',
 	'components/scripts/template.js'
 ]; // will be processed in array order
-var sassSources = ['components/sass/style.scss'];
+
 
 gulp.task('coffee', function() {
 	gulp.src(coffeeSources)
@@ -32,6 +37,11 @@ gulp.task( 'js', function() {
 		.pipe(browserify())
 		.pipe(gulp.dest('builds/development/js'))
 });
+
+
+// PROCESS SASS --------------------------------------------------------------|
+
+var sassSources = ['components/sass/style.scss'];
 
 gulp.task( 'compass', function() {
 	gulp.src(sassSources)
