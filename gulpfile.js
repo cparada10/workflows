@@ -7,6 +7,7 @@ var gulp = require('gulp'),
 	connect = require('gulp-connect'),
 	gulpif = require('gulp-if'),
 	uglify = require('gulp-uglify'),
+	minifyHTML = require('gulp-minify-html'),
 	concat = require('gulp-concat');
 
 
@@ -53,12 +54,15 @@ gulp.task('connect', function() {
 
 // Watch HTML Files
 htmlSources = [
+	'builds/development/*.html',
 	outputDir + '*.html', 
 	outputDir + '*.php',
 	outputDir + 'js/*.json'
 ];
 gulp.task('html', function() {
 	gulp.src(htmlSources)
+		.pipe( gulpif( env ===  'production', minifyHTML() ) )
+		.pipe( gulpif( env ===  'production', gulp.dest(outputDir) ) )
 		.pipe(connect.reload())
 });
 
