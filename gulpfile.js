@@ -10,6 +10,26 @@ var gulp = require('gulp'),
 
 // CORE TASKS ----------------------------------------------------------------|
 
+// Initialize Vars
+var env, 
+	coffeeSources, 
+	jsSources,
+	sassSources,
+	htmlSources,
+	outputDir,
+	sassStyle;
+
+// Check environment
+env = process.env.NODE_ENV || 'development';
+
+if( env === 'development' ) {
+	outputDir = 'builds/development/';
+	sassStyle = 'expanded';
+} else {
+	outputDir = 'builds/production/';
+	sassStyle = 'compressed';
+}
+
 // Default tasks
 gulp.task('default', ['html', 'coffee', 'js', 'compass', 'connect', 'watch']);
 
@@ -24,16 +44,16 @@ gulp.task('watch', function() {
 // Live Reload Server
 gulp.task('connect', function() {
 	connect.server({
-		root: 'builds/development',
+		root: outputDir,
 		livereload: true
 	});
 });
 
 // Watch HTML Files
-var htmlSources = [
-	'builds/development/*.html', 
-	'builds/development/*.php',
-	'builds/development/js/*.json'
+htmlSources = [
+	outputDir + '*.html', 
+	outputDir + '*.php',
+	outputDir + 'js/*.json'
 ];
 gulp.task('html', function() {
 	gulp.src(htmlSources)
@@ -44,8 +64,8 @@ gulp.task('html', function() {
 // PROCESS JS ----------------------------------------------------------------|
 
 // Set Coffee and JS files
-var coffeeSources = ['components/coffee/tagline.coffee'];
-var jsSources = [
+coffeeSources = ['components/coffee/tagline.coffee'];
+jsSources = [
 	'components/scripts/rclick.js',
 	'components/scripts/pixgrid.js',
 	'components/scripts/tagline.js',
@@ -65,7 +85,7 @@ gulp.task( 'js', function() {
 	gulp.src(jsSources)
 		.pipe( concat('script.js') )
 		.pipe( browserify() )
-		.pipe( gulp.dest('builds/development/js') )
+		.pipe( gulp.dest(outputDir + 'js') )
 		.pipe( connect.reload() )
 });
 
@@ -73,18 +93,18 @@ gulp.task( 'js', function() {
 // PROCESS SASS --------------------------------------------------------------|
 
 // Set SASS Sources
-var sassSources = ['components/sass/style.scss'];
+sassSources = ['components/sass/style.scss'];
 
 // SASS Task (+ Compass)
 gulp.task( 'compass', function() {
 	gulp.src(sassSources)
 		.pipe(compass({
 			sass: 'components/sass',
-			image: 'builds/development/images',
-			style: 'expanded'
+			image: outputDir + 'images',
+			style: sassStyle
 		})
 		.on('error', gutil.log))
-		.pipe(gulp.dest('builds/development/css'))
+		.pipe(gulp.dest(outputDir + 'css'))
 		.pipe( connect.reload() )
 });
 
