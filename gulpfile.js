@@ -1,3 +1,6 @@
+// PRODUCTION TERMINAL COMMAND
+// NODE_ENV=production gulp
+
 // SET REQUIREMENTS ----------------------------------------------------------|
 var gulp = require('gulp'),
 	gutil = require('gulp-util'), 
@@ -9,6 +12,8 @@ var gulp = require('gulp'),
 	uglify = require('gulp-uglify'),
 	minifyHTML = require('gulp-minify-html'),
 	minifyJSON = require('gulp-jsonminify'),
+	imagemin = require('gulp-imagemin'),
+	pngcrush = require('imagemin-pngcrush'),
 	concat = require('gulp-concat');
 
 
@@ -35,7 +40,7 @@ if( env === 'development' ) {
 }
 
 // Default tasks
-gulp.task('default', ['html', 'json', 'coffee', 'js', 'compass', 'connect', 'watch']);
+gulp.task('default', ['html', 'json', 'coffee', 'js', 'compass', 'images', 'connect', 'watch']);
 
 // Files to watch
 gulp.task('watch', function() {
@@ -43,6 +48,7 @@ gulp.task('watch', function() {
 	gulp.watch( jsSources, ['js'] );
 	gulp.watch( 'components/sass/*.scss', ['compass'] );
 	gulp.watch( 'builds/development/js/*.json', ['json'] );
+	gulp.watch( 'builds/development/images/**/*.*', ['images']);
 	gulp.watch( htmlSources, ['html'] );
 });
 
@@ -54,6 +60,8 @@ gulp.task('connect', function() {
 	});
 });
 
+// PROCESS HTML --------------------------------------------------------------|
+
 // Watch HTML Files
 htmlSources = [
 	'builds/development/*.html',
@@ -64,13 +72,31 @@ gulp.task('html', function() {
 	gulp.src(htmlSources)
 		.pipe( gulpif( env ===  'production', minifyHTML() ) )
 		.pipe( gulpif( env ===  'production', gulp.dest(outputDir) ) )
-		.pipe(connect.reload())
+		.pipe( connect.reload() )
 });
+
+
+// PROCESS JSON --------------------------------------------------------------|
+
 gulp.task('json', function() {
 	gulp.src('builds/development/js/*.json')
 		.pipe( gulpif( env ===  'production', minifyJSON() ) )
 		.pipe( gulpif( env ===  'production', gulp.dest('builds/production/js/') ) )
-		.pipe(connect.reload())
+		.pipe( connect.reload() )
+});
+
+
+// PROCESS IMAGES ------------------------------------------------------------|
+
+gulp.task('images', function() {
+	gulp.src('builds/development/images/**/*.*')
+		.pipe( gulpif( env ===  'production', imagemin({
+			progressive: true,
+			svgoPlugins: [{ removeViewBox: false }],
+			use: [ pngcrush() ]
+		}) ) )
+		.pipe( gulpif( env ===  'production', gulp.dest(outputDir + 'images') ) )
+		.pipe( connect.reload() )
 });
 
 
